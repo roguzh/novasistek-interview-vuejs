@@ -3,16 +3,18 @@ import type { Comic } from '@/types/types';
 import { createStore } from 'vuex';
 
 interface State {
-    isLoading: boolean
+    isLoading: boolean;
     comicList: Array<Comic>;
     favouriteComics: Array<number>;
+    toggleFavourites: boolean;
 }
 
 const store = createStore<State>({
     state: {
         favouriteComics: [],
         comicList: [],
-        isLoading: false
+        isLoading: false,
+        toggleFavourites: false
     },
     mutations: {
         setIsLoading(state, isLoading) {
@@ -29,6 +31,9 @@ const store = createStore<State>({
             } else {
                 state.favouriteComics.push(comicId);
             }
+        },
+        changeToggleFavourites(state) {
+            state.toggleFavourites = !state.toggleFavourites;
         }
     },
     actions: {

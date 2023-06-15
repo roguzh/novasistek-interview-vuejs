@@ -1,34 +1,39 @@
 <script setup lang="ts">
 import '@/assets/fonts/fonts.css'
 import type { Comic } from '@/types/types'
-import { ref, onMounted, computed } from 'vue'
+import { ref, onMounted, computed, type Ref } from 'vue'
 import { useStore } from 'vuex'
 
 const store = useStore()
 
-const MAX_DESC_CHAR_COUNT = 183
+const MAX_DESC_CHAR_COUNT = 228
+const MAX_TITLE_CHAR_COUNT = 86
 
 const title = 'Placeholder Title'
 const description =
   'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nulla ultrices massa non vehicula molestie. Vestibulum tincidunt ut orci eget iaculis. Vestibulum tincidunt ut orci eget iaculis.'
 
-const creators = [
-  {
-    name: 'Creator 1',
-    role: 'Writer'
-  },
-  {
-    name: 'Creator 2',
-    role: 'Designer'
-  },
-  {
-    name: 'Creator 3',
-    role: 'Publisher'
-  }
-]
+const creators = {
+  items: [
+    {
+      name: 'Creator 1',
+      role: 'Writer'
+    },
+    {
+      name: 'Creator 2',
+      role: 'Designer'
+    },
+    {
+      name: 'Creator 3',
+      role: 'Publisher'
+    }
+  ]
+}
 
-const thumbnail = 'https://i.annihil.us/u/prod/marvel/i/mg/d/00/56f462d8f0eef/clean.jpg'
-
+const thumbnail = {
+  path: 'https://i.annihil.us/u/prod/marvel/i/mg/d/00/56f462d8f0eef',
+  extension: 'jpg'
+}
 const dumpComic = {
   id: 0,
   title,
@@ -38,35 +43,64 @@ const dumpComic = {
   isHovered: false
 }
 
-const featuredComics = ref([
-  dumpComic,
-  { ...dumpComic, id: 1 },
-  { ...dumpComic, id: 2 },
-  { ...dumpComic, id: 3 },
-  { ...dumpComic, id: 4 }
-])
+// const comics = ref([
+//   dumpComic,
+//   { ...dumpComic, id: 1 },
+//   { ...dumpComic, id: 2 },
+//   { ...dumpComic, id: 3 },
+//   { ...dumpComic, id: 4 },
+//   { ...dumpComic, id: 5 },
+//   { ...dumpComic, id: 6 },
+//   { ...dumpComic, id: 7 },
+//   { ...dumpComic, id: 8 }
+// ])
+
+interface ComicItem extends Comic {
+  isHovered: boolean
+}
+
+const comics: Ref<ComicItem[]> = ref([])
+
+const getCreatorString = (comic: Comic) => {
+  const creatorString = comic.creators.items
+                .reduce((acc, prevCreator) => `${acc} • ${prevCreator.name}`, '')
+                .substring(2);
+
+  return creatorString.length > MAX_TITLE_CHAR_COUNT ? creatorString.substring(0, MAX_TITLE_CHAR_COUNT) + '...' : creatorString; 
+}
 
 const isComicHovered = (comicID: number) => {
-  const comic = featuredComics.value.find((c) => c.id == comicID)
+  const comic = comics.value.find((c: any) => c.id == comicID)
 
   return comic ? comic.isHovered : false
 }
 
 const setHovered = (comicID: number, state: boolean) => {
-  const index = featuredComics.value.findIndex((c) => c.id == comicID)
+  const index = comics.value.findIndex((c: any) => c.id == comicID)
   if (index != -1) {
-    console.log(state)
-    featuredComics.value[index].isHovered = state
+    comics.value[index].isHovered = state
   }
 }
+
+onMounted(async () => {
+  comics.value = store.state.comicList
+    .map((c: Comic) => ({ ...c, isHovered: false }))
+    .filter((c: Comic) => !c.thumbnail.path.includes('image_not_available'))
+  try {
+    store.dispatch('fetchComics')
+    console.log('fetching')
+  } catch (error) {
+    console.error('Error fetching user list:', error)
+  }
+})
 </script>
 
 <template>
   <div class="wrapper">
     <div
-      v-for="comic in featuredComics"
+      v-for="comic in (store.state.toggleFavourites ? comics : comics.filter((c) => store.getters.isComicFav(c.id)))"
       :key="comic.title"
-      :class="'featured-comic ' + `${isComicHovered(comic.id) ? 'hovered' : 'unhovered'}`"
+      :class="'comic ' + `${isComicHovered(comic.id) ? 'hovered' : 'unhovered'}`"
       @mouseenter="setHovered(comic.id, true)"
       @mouseleave="setHovered(comic.id, false)"
     >
@@ -83,24 +117,27 @@ const setHovered = (comicID: number, state: boolean) => {
         />
       </div>
       <div class="thumbnail">
-        <img :src="thumbnail" alt="Comic's Thumbnail" />
+        <img
+          :src="`${comic.thumbnail.path}/portrait_uncanny.${comic.thumbnail.extension}`"
+          alt="Comic's Thumbnail"
+        />
       </div>
       <div class="details">
         <div class="base-information">
-          <div class="title">{{ title.toLocaleUpperCase() }}</div>
+          <div class="title">{{ comic.title.toLocaleUpperCase() }}</div>
         </div>
         <div class="description">
           {{
-            comic.description.length >= MAX_DESC_CHAR_COUNT
-              ? comic.description.substring(0, MAX_DESC_CHAR_COUNT) + '...'
-              : comic.description
+            comic.description && comic.description != "#N/A"
+              ? comic.description.length >= MAX_DESC_CHAR_COUNT
+                ? comic.description.substring(0, MAX_DESC_CHAR_COUNT) + '...'
+                : comic.description
+              : ''
           }}
         </div>
         <div class="creators-wrapper">
           {{
-            comic.creators
-              .reduce((acc, prevCreator) => `${acc} • ${prevCreator.name}`, '')
-              .substring(2)
+            getCreatorString(comic)
           }}
         </div>
       </div>
@@ -126,7 +163,7 @@ const setHovered = (comicID: number, state: boolean) => {
   gap: 36px;
 }
 
-.featured-comic {
+.comic {
   width: 248px;
   height: 338px;
 
@@ -150,22 +187,22 @@ const setHovered = (comicID: number, state: boolean) => {
   // }
 }
 
-.featured-comic.hovered {
+.comic.hovered {
   transform: scale(1.15);
   transition: 0.66s ease-in-out;
 
   .details {
-    top: 214px;
+    bottom: 0%;
     transition: 0.66s ease-in-out;
   }
 }
 
-.featured-comic.unhovered {
+.comic.unhovered {
   transform: scale(1);
   transition: 0.66s ease-in-out;
 
   .details {
-    top: 302px;
+    bottom: -224px;
     transition: 0.66s ease-in-out;
   }
 }
@@ -179,6 +216,10 @@ const setHovered = (comicID: number, state: boolean) => {
     transform: scale(1.25);
     transition: 1s;
   }
+}
+
+.logo {
+  filter: drop-shadow(0px 0px 1px #ffffffaa) drop-shadow(0px 0px 2px #ffffffaa);
 }
 
 .thumbnail {
@@ -204,29 +245,37 @@ const setHovered = (comicID: number, state: boolean) => {
   background: var(--vt-c-black-mute);
 
   position: absolute;
-  top: 302px;
+  font-family: 'Roboto';
 }
 
 .title {
   text-align: center;
 
-  margin-bottom: -2px;
+  margin-bottom: -4px;
+  margin-top: 0px;
 
-  font-size: 20px;
   color: white;
+  
+  font-size: 16px;
+  font-weight: 600;
+  font-family: 'Roboto';
 
-  font-family: 'Marvel';
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 }
 
 .description {
   font-size: 10px;
   text-align: justify;
 
+  margin-top: 2px;
+
   color: var(--vt-c-white-mute);
 }
 .creators-wrapper {
   text-align: center;
-  margin-top: 4px;
+  margin-top: 6px;
   font-size: 10px;
   font-weight: bold;
   color: white;

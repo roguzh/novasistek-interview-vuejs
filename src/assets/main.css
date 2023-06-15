@@ -1,4 +1,5 @@
 @import './base.css';
+@import './fonts//fonts.css';
 
 #app {
   margin: 0 auto;
@@ -32,5 +33,6 @@ a,
 }
 
 .bold {
+  font-family: 'Roboto';
   font-weight: bold;
 }

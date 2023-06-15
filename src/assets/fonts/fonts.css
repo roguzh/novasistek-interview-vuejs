@@ -1,4 +1,9 @@
 @font-face {
-    font-family: 'Marvel';
-    src: url('/src/assets/fonts/marvel-regular.ttf') format('truetype');
-  }
+  font-family: 'Marvel';
+  src: url('/src/assets/fonts/marvel-regular.ttf') format('truetype');
+}
+
+@font-face {
+  font-family: 'Roboto';
+  src: url('/src/assets/fonts/roboto-regular.ttf') format('truetype');
+}

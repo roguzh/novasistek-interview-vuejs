@@ -34,9 +34,6 @@ const getCreatorString = (comic: Comic) => {
 //   return comic ? comic.isHovered : false
 // }
 
-const test = () => {
-  console.log("test");
-}
 
 const setHovered = (state: boolean) => {
   isHovered.value = state;

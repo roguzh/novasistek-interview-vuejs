@@ -22,9 +22,9 @@ export const getComics = async (offset: number = 0, limit: number = 40): Promise
     const authParams = getAuthenticationParams();
     const url = BASE_URL + endpoint;
 
-    return (mockupJSON.data.results as Array<Comic>);
+    // return (mockupJSON.data.results as Array<Comic>);
 
-    return [];
+    // return [];
     try {
         const response = await axios.get(url, {
             params: {

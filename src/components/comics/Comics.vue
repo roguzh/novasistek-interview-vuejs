@@ -35,13 +35,7 @@ const closeDetailedComics = () => {
 const avoidClick = ($event: MouseEvent) => {
   $event.stopPropagation()
 }
-onMounted(async () => {
-  try {
-    store.dispatch('fetchComics')
-  } catch (error) {
-    console.error('Error fetching user list:', error)
-  }
-})
+
 </script>
 
 <template>

@@ -5,6 +5,7 @@ import { createStore } from 'vuex';
 interface State {
     isLoading: boolean;
     comicList: Array<Comic>;
+    selectedComic: Comic | null;
     favouriteComics: Array<number>;
     toggleFavourites: boolean;
 }
@@ -13,6 +14,7 @@ const store = createStore<State>({
     state: {
         favouriteComics: [],
         comicList: [],
+        selectedComic: null,
         isLoading: false,
         toggleFavourites: false
     },
@@ -22,6 +24,9 @@ const store = createStore<State>({
         },
         setComics(state, comicList: Array<Comic>) {
             state.comicList = comicList;
+        },
+        setSelectedComic(state, comic: Comic | null) {
+            state.selectedComic = comic;
         },
         changeComicFavState(state, comicId: number) {
             const index = state.favouriteComics.indexOf(comicId);

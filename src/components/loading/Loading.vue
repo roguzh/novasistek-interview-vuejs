@@ -1,5 +1,10 @@
 <script setup lang="ts">
-const animationURLs = ['0.gif', '1.gif', '2.gif']
+import loading_0 from '@/assets/animations/0.gif'
+import loading_1 from '@/assets/animations/1.gif'
+import loading_2 from '@/assets/animations/2.gif'
+
+
+const animationURLs = [loading_2]
 
 const randomAnimation = () => {
   const randomIndex = Math.round(Math.random() * (animationURLs.length - 1))
@@ -9,7 +14,7 @@ const randomAnimation = () => {
 </script>
 
 <template>
-  <div class="animation"><img :src="'src/assets/animations/' + randomAnimation()" /></div>
+  <div class="animation"><img :src="randomAnimation()" /></div>
 </template>
 
 <style scoped>

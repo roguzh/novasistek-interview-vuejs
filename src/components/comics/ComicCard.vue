@@ -1,20 +1,22 @@
 <script setup lang="ts">
 import '@/assets/fonts/fonts.css'
-import type { Comic } from '../../types/types';
+import type { Comic } from '../../types/types'
 import { ref, onMounted, computed, type Ref } from 'vue'
 import { useStore } from 'vuex'
+
+import favIcon from '@/assets/icons/filled_star.png'
+import notFavIcon from '@/assets/icons/empty_star.png'
 
 const store = useStore()
 
 const MAX_DESC_CHAR_COUNT = 228
 const MAX_TITLE_CHAR_COUNT = 86
 
-
 const props = defineProps<{
   comic: Comic
 }>()
 
-const comic: Comic = props.comic;
+const comic: Comic = props.comic
 
 const isHovered = ref(false)
 
@@ -28,23 +30,12 @@ const getCreatorString = (comic: Comic) => {
     : creatorString
 }
 
-// const isComicHovered = (comicID: number) => {
-//   const comic = comics.value.find((c: any) => c.id == comicID)
-
-//   return comic ? comic.isHovered : false
-// }
-
-
 const setHovered = (state: boolean) => {
-  isHovered.value = state;
-  //   const index = comics.value.findIndex((c: any) => c.id == comicID)
-  //   if (index != -1) {
-  //     comics.value[index].isHovered = state
-  //   }
+  isHovered.value = state
 }
 
 const setFavourite = ($event: MouseEvent) => {
-  $event.stopPropagation();
+  $event.stopPropagation()
   store.commit('changeComicFavState', comic.id)
 }
 </script>
@@ -59,11 +50,7 @@ const setFavourite = ($event: MouseEvent) => {
       <img
         alt="Favourite Badge"
         class="logo"
-        :src="
-          store.getters.isComicFav(comic.id)
-            ? 'src/assets/icons/filled_star.png'
-            : 'src/assets/icons/empty_star.png'
-        "
+        :src="store.getters.isComicFav(comic.id) ? favIcon : notFavIcon"
         @click="setFavourite"
       />
     </div>

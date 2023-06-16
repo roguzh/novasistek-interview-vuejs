@@ -1,7 +1,6 @@
 import type { Comic } from '../types/types';
 import axios from 'axios';
 import md5 from 'crypto-js/md5';
-import * as mockupJSON from './mockup.json';
 
 const BASE_URL = "https://gateway.marvel.com:443/";
 
@@ -21,8 +20,6 @@ export const getComics = async (offset: number = 0, limit: number = 40): Promise
     const endpoint = "v1/public/comics?";
     const authParams = getAuthenticationParams();
     const url = BASE_URL + endpoint;
-
-    // return (mockupJSON.data.results as Array<Comic>);
 
     // return [];
     try {

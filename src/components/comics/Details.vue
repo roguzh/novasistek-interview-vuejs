@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import type { Comic } from '@/types/types'
-import { Ref, ref } from 'vue'
+import { type Ref, ref } from 'vue'
 import { useStore } from 'vuex'
 
 const store = useStore()
@@ -36,7 +36,7 @@ const setFavourite = ($event: MouseEvent) => {
   <div class="container" @click="closeDetailedComics">
     <div
       :class="'detailed-comic-wrapper ' + `${props.comic ? 'bounceIn' : ''}`"
-      v-if="props.comic != null"
+      v-if="comic != null"
       @click="$event.stopPropagation()"
     >
       <div class="section-wrapper">
@@ -48,21 +48,21 @@ const setFavourite = ($event: MouseEvent) => {
         </div>
         <div class="section details-section">
           <div class="title">{{ comic.title }}</div>
-          <div class="description" v-if="comic?.description && comic.description != `#N/A`">
+          <div class="description" v-if="comic.description && comic.description != `#N/A`">
             <span class="detail-title">Description</span><br />
-            {{ comic?.description }}
+            {{ comic.description }}
           </div>
           <div class="section-wrapper inner">
             <div class="section creators" v-if="comic && comic.creators.items.length > 0">
               <span class="detail-title">Creators</span><br />
-              <p v-for="creator in comic?.creators.items" :key="creator.name">
+              <p v-for="creator in comic.creators.items" :key="creator.name">
                 • {{ creator.name }}
                 <span class="muted">{{ getCreatorRole(creator.role) }}</span>
               </p>
             </div>
             <div class="section characters" v-if="comic && comic.characters.items.length > 0">
               <span class="detail-title">Characters</span><br />
-              <p v-for="character in comic?.characters.items" :key="character.name">
+              <p v-for="character in comic.characters.items" :key="character.name">
                 • {{ character.name }}
               </p>
             </div>

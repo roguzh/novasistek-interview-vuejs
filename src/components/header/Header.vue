@@ -17,7 +17,7 @@ const DUMP_USER = {
     <div class="user-info">
       <div id="favourite-count-wrapper" @click="store.commit('changeToggleFavourites')">
         <span>{{ store.state.favouriteComics.length }}</span>
-        <img alt="Favourite Badge" src="src/assets/icons/filled_star.png" />
+        <img alt="Favourite Badge" src="@/assets/icons/filled_star.png" />
       </div>
       {{ DUMP_USER.username }}
     </div>

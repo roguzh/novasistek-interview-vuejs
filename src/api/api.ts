@@ -16,7 +16,7 @@ const getAuthenticationParams = () => {
     };
 }
 
-export const getComics = async (offset: number = 0, limit: number = 40): Promise<Array<Comic>> => {
+export const getComics = async (offset: number = 0, limit: number = 100): Promise<Array<Comic>> => {
     const endpoint = "v1/public/comics?";
     const authParams = getAuthenticationParams();
     const url = BASE_URL + endpoint;
